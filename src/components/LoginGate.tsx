@@ -142,8 +142,8 @@ export default function LoginGate({ onLoginSuccess }: LoginGateProps) {
 
                     <input 
                         type="text" 
-                        placeholder="00000000"
-                        maxLength={8}
+                        placeholder="0000000"
+                        maxLength={7}
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg text-center text-3xl tracking-[0.5em] p-5 focus:border-blue-500 outline-none font-mono"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
