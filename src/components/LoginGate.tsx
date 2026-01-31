@@ -142,8 +142,8 @@ export default function LoginGate({ onLoginSuccess }: LoginGateProps) {
 
                     <input 
                         type="text" 
-                        placeholder="000000"
-                        maxLength={6}
+                        placeholder="00000000"
+                        maxLength={8}
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg text-center text-3xl tracking-[0.5em] p-5 focus:border-blue-500 outline-none font-mono"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
@@ -169,7 +169,7 @@ export default function LoginGate({ onLoginSuccess }: LoginGateProps) {
                     <div className="mb-6">
                         <Lock className="w-24 h-24 border-4 border-slate-800 rounded-full p-6 mx-auto mb-6 text-white" />
                         <h3 className="text-lg font-bold text-white">Trouble logging in?</h3>
-                        <p className="text-sm text-slate-400 mt-4 px-2 leading-relaxed">Enter your email and we'll send you a link to get back into your account.</p>
+                        <p className="text-sm text-slate-400 mt-4 px-2 leading-relaxed">Enter your email and we will send you a link to get back into your account.</p>
                     </div>
 
                     <input 
@@ -208,11 +208,7 @@ export default function LoginGate({ onLoginSuccess }: LoginGateProps) {
             </p>
         </div>
 
-        {/* Branding */}
-        <div className="text-center mt-4">
-            <p className="text-xs text-slate-600 uppercase tracking-widest">Powered By</p>
-            <p className="text-lg font-bold text-white tracking-[0.3em] mt-3">TAPINFI</p>
-        </div>
+
 
       </div>
     </div>
