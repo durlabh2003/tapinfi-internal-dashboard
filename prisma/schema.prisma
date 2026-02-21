@@ -1,0 +1,51 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model WhatsappContact {
+  id             Int      @id @default(autoincrement())
+  contact_number String   @unique
+  labels         String[]
+  slot_array     Int[]
+  created_at     DateTime @default(now())
+}
+
+model EmailContact {
+  id         Int      @id @default(autoincrement())
+  email_id   String   @unique
+  labels     String[]
+  slot_array Int[]
+  created_at DateTime @default(now())
+}
+
+model CampaignSlot {
+  slot_id          Int      @id @default(autoincrement())
+  campaign_type    String
+  generated_by     String
+  count            Int
+  label_associated String[]
+  tuple_of_values  String[]
+  file_path        String?
+  created_at       DateTime @default(now())
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  user_email String
+  action_type String
+  entity     String
+  created_at DateTime @default(now())
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  created_at DateTime @default(now())
+}
