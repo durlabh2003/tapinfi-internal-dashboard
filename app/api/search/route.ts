@@ -1,44 +1,60 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request) {
   try {
-    const slotId = Number(params.id);
+    const { query } = await req.json();
 
-    if (!slotId) {
+    if (!query || !query.trim()) {
       return NextResponse.json(
-        { message: "Invalid Slot ID" },
+        { message: "Query is required" },
         { status: 400 }
       );
     }
 
-    const fileName = `slot_${slotId}.xlsx`;
+    const q = query.trim();
+    const slotIdNum = parseInt(q, 10);
 
-    const { data, error } = await supabaseServer.storage
-      .from("slot-files")
-      .download(fileName);
-
-    if (error || !data) {
-      return NextResponse.json(
-        { message: "File not found" },
-        { status: 404 }
-      );
-    }
-
-    return new NextResponse(data, {
-      status: 200,
-      headers: {
-        "Content-Disposition": `attachment; filename=${fileName}`,
-        "Content-Type":
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // Search WhatsApp contacts by contact number or label
+    const whatsapp = await prisma.whatsappContact.findMany({
+      where: {
+        OR: [
+          { contact_number: { contains: q, mode: "insensitive" } },
+          { labels: { has: q } },
+        ],
       },
+      take: 50,
     });
+
+    // Search Email contacts by email or label
+    const email = await prisma.emailContact.findMany({
+      where: {
+        OR: [
+          { email_id: { contains: q, mode: "insensitive" } },
+          { labels: { has: q } },
+        ],
+      },
+      take: 50,
+    });
+
+    // Search Campaign Slots by slot ID (if numeric) or label
+    const slot = await prisma.campaignSlot.findMany({
+      where: {
+        OR: [
+          ...(!isNaN(slotIdNum) ? [{ slot_id: slotIdNum }] : []),
+          { label_associated: { has: q } },
+          { generated_by: { contains: q, mode: "insensitive" } },
+          { campaign_type: { contains: q, mode: "insensitive" } },
+        ],
+      },
+      take: 20,
+    });
+
+    return NextResponse.json({ whatsapp, email, slot });
   } catch (err: any) {
+    console.error("Search error:", err);
     return NextResponse.json(
       { message: err.message },
       { status: 500 }
